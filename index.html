@@ -539,7 +539,9 @@
         <p style="color: var(--text-muted);">Please let me know how you like this website!</p>
       </div>
 
-      <form id="feedbackForm" action="https://formspree.io/f/YOUR_FORMSPREE_ENDPOINT" method="POST" onsubmit="handleFormSubmit(event)">
+      <form id="feedbackForm" action="https://api.web3forms.com/submit" method="POST" onsubmit="handleFormSubmit(event)">
+        <input type="hidden" name="access_key" value="5d68a511-3b38-4447-86ed-3ab3b48acb00">
+
         <div class="form-group">
           <label>Name</label>
           <input type="text" name="teacherName" id="teacherName" placeholder="Enter your name" required>
@@ -693,7 +695,7 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    // Feedback Interactions & Formspree Handler
+    // Feedback Interactions & Web3Forms Handler
     function scrollToFeedback() {
       document.getElementById('feedback').scrollIntoView({ behavior: 'smooth' });
     }
@@ -714,15 +716,16 @@
           headers: { 'Accept': 'application/json' }
         });
 
-        if (response.ok) {
+        const json = await response.json();
+        if (response.status == 200) {
           alert(`Thank you, ${name}! Your feedback has been sent directly to Biraj.`);
           form.reset();
           triggerCelebration();
         } else {
-          alert("Oops! There was a problem submitting your form. Please make sure you configured your Formspree endpoint URL.");
+          alert(json.message || "Oops! There was a problem submitting your form. Please check your Web3Forms Access Key.");
         }
       } catch (error) {
-        alert("Network error. Please check your connection.");
+        alert("Network error. Please check your internet connection.");
       } finally {
         btn.innerText = "Submit Feedback";
         btn.disabled = false;
