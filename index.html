@@ -96,6 +96,40 @@
       margin-bottom: 2rem;
     }
 
+    /* Countdown Timer Styles */
+    .intro-timer {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .timer-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      padding: 10px 14px;
+      border-radius: 12px;
+      min-width: 65px;
+      text-align: center;
+    }
+
+    .timer-value {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+    }
+
+    .timer-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
     .btn-enter {
       background: linear-gradient(135deg, var(--accent-gold), var(--accent-amber));
       color: #0f172a;
@@ -111,9 +145,16 @@
       letter-spacing: 1px;
     }
 
-    .btn-enter:hover {
+    .btn-enter:hover:not(:disabled) {
       transform: translateY(-3px) scale(1.05);
       box-shadow: 0 15px 40px rgba(245, 158, 11, 0.5);
+    }
+
+    .btn-enter:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+      box-shadow: none;
     }
 
     /* Ambient Background Mesh */
@@ -333,7 +374,7 @@
     .icon-btn.next-btn:hover svg { transform: translateX(4px); }
     .icon-btn.speak-btn:hover svg { transform: scale(1.1); }
 
-    /* Honor Cards Grid with 3D Tilt */
+    /* Honor Cards Grid with Professional Styling & 3D Tilt */
     .section-title {
       text-align: center;
       margin-bottom: 3rem;
@@ -353,45 +394,62 @@
     }
 
     .tilt-card {
-      background: var(--glass-card);
+      background: linear-gradient(145deg, rgba(20, 26, 42, 0.75) 0%, rgba(10, 14, 24, 0.85) 100%);
       border: 1px solid var(--glass-border);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 2.5rem;
-      transition: transform 0.2s cubic-bezier(0.2, 1, 0.2, 1), border-color 0.3s ease;
+      border-top: 2px solid rgba(245, 158, 11, 0.5);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
       transform-style: preserve-3d;
       perspective: 1000px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    .tilt-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 60%);
+      pointer-events: none;
     }
 
     .tilt-card:hover {
-      border-color: rgba(245, 158, 11, 0.4);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      border-color: rgba(245, 158, 11, 0.6);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(245, 158, 11, 0.15);
     }
 
     .card-icon-wrapper {
-      width: 60px;
-      height: 60px;
-      border-radius: 14px;
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.2);
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.05));
+      border: 1px solid rgba(245, 158, 11, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.8rem;
+      font-size: 2rem;
       margin-bottom: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
 
     .tilt-card h3 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      margin-bottom: 0.75rem;
-      color: #fff;
+      font-size: 1.6rem;
+      margin-bottom: 0.85rem;
+      color: #ffffff;
+      letter-spacing: 0.3px;
     }
 
     .tilt-card p {
       color: var(--text-muted);
-      line-height: 1.6;
-      font-size: 0.95rem;
+      line-height: 1.7;
+      font-size: 0.98rem;
     }
 
     /* Feedback Section */
@@ -464,7 +522,28 @@
     <div class="intro-content">
       <div class="intro-subtitle">✦ Special Tribute ✦</div>
       <h1 class="intro-title">Happy Teacher's Day</h1>
-      <button class="btn-enter" onclick="openDoors()">Enter Experience 🚪✨</button>
+      
+      <!-- Days, Hours, Minutes, Seconds Timer -->
+      <div class="intro-timer">
+        <div class="timer-box">
+          <div id="timerDays" class="timer-value">00</div>
+          <div class="timer-label">Days</div>
+        </div>
+        <div class="timer-box">
+          <div id="timerHours" class="timer-value">00</div>
+          <div class="timer-label">Hours</div>
+        </div>
+        <div class="timer-box">
+          <div id="timerMinutes" class="timer-value">00</div>
+          <div class="timer-label">Minutes</div>
+        </div>
+        <div class="timer-box">
+          <div id="timerSeconds" class="timer-value">00</div>
+          <div class="timer-label">Seconds</div>
+        </div>
+      </div>
+
+      <button id="enterBtn" class="btn-enter" disabled onclick="openDoors()">Please Wait...</button>
     </div>
   </div>
 
@@ -540,7 +619,7 @@
       </div>
 
       <form id="feedbackForm" action="https://api.web3forms.com/submit" method="POST" onsubmit="handleFormSubmit(event)">
-        <input type="hidden" name="access_key" value="5d68a511-3b38-4447-86ed-3ab3b48acb00">
+        <input type="hidden" name="access_key" value="75dba014-fe5d-4403-89f7-2822c9b491b7">
 
         <div class="form-group">
           <label>Name</label>
@@ -560,12 +639,51 @@
   </div>
 
   <script>
+    // Target Opening Date
+    const TARGET_OPENING_DATE = new Date("2026-09-05T12:00:00").getTime();
+
     // Trigger Intro Screen Animation on load
     window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         document.getElementById('introScreen').classList.add('show-text');
       }, 200);
+      
+      startCountdown();
     });
+
+    function startCountdown() {
+      const daysEl = document.getElementById('timerDays');
+      const hoursEl = document.getElementById('timerHours');
+      const minEl = document.getElementById('timerMinutes');
+      const secEl = document.getElementById('timerSeconds');
+      const btn = document.getElementById('enterBtn');
+
+      let timerInterval = setInterval(() => {
+        const now = new Date().getTime();
+        const difference = TARGET_OPENING_DATE - now;
+
+        if (difference <= 0) {
+          clearInterval(timerInterval);
+          daysEl.innerText = "00";
+          hoursEl.innerText = "00";
+          minEl.innerText = "00";
+          secEl.innerText = "00";
+          btn.disabled = false;
+          btn.innerText = "Enter Experience 🚪✨";
+          return;
+        }
+
+        let days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        daysEl.innerText = String(days).padStart(2, '0');
+        hoursEl.innerText = String(hours).padStart(2, '0');
+        minEl.innerText = String(minutes).padStart(2, '0');
+        secEl.innerText = String(seconds).padStart(2, '0');
+      }, 1000);
+    }
 
     function openDoors() {
       const intro = document.getElementById('introScreen');
@@ -656,7 +774,7 @@
     const quotes = [
       { text: "Education is not the filling of a pail, but the lighting of a fire.", author: "William Butler Yeats" },
       { text: "Technology is just a tool. In terms of getting the kids working together and motivating them, the teacher is the most important.", author: "Bill Gates" },
-      { text: "The influence of a good teacher can never be erased.", author: "Unknown" },
+      { text: "A good teacher teaches from the heart, not just from the book.", author: "A.P.J Abdul Kalam" },
       { text: "It is the supreme art of the teacher to awaken joy in creative expression and knowledge.", author: "Albert Einstein" }
     ];
     let quoteIdx = 0;
