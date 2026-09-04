@@ -498,6 +498,30 @@
       background: rgba(255, 255, 255, 0.05);
     }
 
+    /* Active Star Rating Styles */
+    .star-rating {
+      display: flex;
+      gap: 10px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.2);
+      user-select: none;
+      margin-top: 0.25rem;
+    }
+
+    .star-rating .star {
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .star-rating .star:hover {
+      transform: scale(1.2);
+    }
+
+    .star-rating .star.active {
+      color: var(--accent-gold);
+      text-shadow: 0 0 15px var(--accent-glow);
+    }
+
     footer {
       border-top: 1px solid var(--glass-border);
       padding: 2.5rem 0;
@@ -632,6 +656,21 @@
           <label>Comments / Feedback</label>
           <textarea name="teacherComment" id="teacherComment" rows="4" placeholder="Share your thoughts about this website..." required></textarea>
         </div>
+
+        <!-- Star Rating Component -->
+        <div class="form-group">
+          <label>Rating</label>
+          <div class="star-rating" id="starRating">
+            <span class="star" data-value="1">&#9733;</span>
+            <span class="star" data-value="2">&#9733;</span>
+            <span class="star" data-value="3">&#9733;</span>
+            <span class="star" data-value="4">&#9733;</span>
+            <span class="star" data-value="5">&#9733;</span>
+          </div>
+          <!-- Hidden input sent to Web3Forms -->
+          <input type="hidden" name="Rating" id="ratingInput" value="0" required>
+        </div>
+
         <button type="submit" id="submitBtn" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">Submit Feedback</button>
       </form>
     </div>
@@ -643,7 +682,7 @@
 
   <script>
     // Target Opening Date
-    const TARGET_OPENING_DATE = new Date("2026-09-04T00:00:00").getTime();
+    const TARGET_OPENING_DATE = new Date("2026-09-05T12:00:00").getTime();
 
     // Trigger Intro Screen Animation on load
     window.addEventListener('DOMContentLoaded', () => {
@@ -821,12 +860,51 @@
       document.getElementById('feedback').scrollIntoView({ behavior: 'smooth' });
     }
 
+    // Interactive Star Rating Logic
+    const stars = document.querySelectorAll('.star-rating .star');
+    const ratingInput = document.getElementById('ratingInput');
+
+    stars.forEach((star) => {
+      star.addEventListener('click', () => {
+        const rating = star.getAttribute('data-value');
+        ratingInput.value = rating;
+        updateStars(rating);
+      });
+
+      star.addEventListener('mouseover', () => {
+        highlightStars(star.getAttribute('data-value'));
+      });
+
+      star.addEventListener('mouseleave', () => {
+        updateStars(ratingInput.value);
+      });
+    });
+
+    function highlightStars(rating) {
+      stars.forEach((s) => {
+        if (parseInt(s.getAttribute('data-value')) <= parseInt(rating)) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+    }
+
+    function updateStars(rating) {
+      highlightStars(rating);
+    }
+
     async function handleFormSubmit(event) {
       event.preventDefault();
       const form = event.target;
       const btn = document.getElementById('submitBtn');
       const name = document.getElementById('teacherName').value;
       
+      if (ratingInput.value === "0") {
+        alert("Please select a star rating before submitting.");
+        return;
+      }
+
       btn.innerText = "Sending Feedback...";
       btn.disabled = true;
 
@@ -839,8 +917,10 @@
 
         const json = await response.json();
         if (response.status == 200) {
-          alert(`Thank you, ${name}! Your feedback has been sent directly to Biraj.`);
+          alert(`Thank you, ${name}! Your feedback and rating have been sent directly to Biraj.`);
           form.reset();
+          ratingInput.value = "0";
+          updateStars(0);
           triggerCelebration();
         } else {
           alert(json.message || "Oops! There was a problem submitting your form. Please check your Web3Forms Access Key.");
